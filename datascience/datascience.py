@@ -8,65 +8,64 @@ class DataScience:
     """
 
     def __init__(self):
+        self.csv_url = 'https://raw.githubusercontent.com/benjaminmrl/data-4452741/main/prets.csv'
+        self.loan_df = pd.read_csv(self.csv_url)
+        self.max_rate = 35
+
+        self.init_df()
+
+    def test_np4(self):
         pass
 
-    def test_np_init(self):
-        prets = pd.read_csv('https://raw.githubusercontent.com/benjaminmrl/data-4452741/main/prets.csv')
+    def init_df(self):
 
         # renommer taux en taux_interet
-        prets.rename(columns={'taux': 'taux_interet'}, inplace=True)
+        self.loan_df.rename(columns={'taux': 'taux_interet'}, inplace=True)
 
         # calcul du taux d'endettement
-        prets['taux_endettement'] = round(prets['remboursement'] / (prets['revenu']) * 100, 2)
+        self.loan_df['taux_endettement'] = round(self.loan_df['remboursement'] / (self.loan_df['revenu']) * 100, 2)
 
         # calculer le cout total du pret
-        prets['cout_total'] = prets['remboursement'] * prets['duree']
+        self.loan_df['cout_total'] = self.loan_df['remboursement'] * self.loan_df['duree']
 
         # calculer les bénéfices mensuels réalisés
-        prets['benefices'] = round(prets['cout_total'] * prets['taux_interet'] / 24 / 100, 2)
+        self.loan_df['benefices'] = round(self.loan_df['cout_total'] * self.loan_df['taux_interet'] / 24 / 100, 2)
 
-        taux_max = 35
-        prets['risque'] = 'Non'
-        prets.loc[prets['taux_endettement'] > taux_max, 'risque'] = 'Oui'
+        self.loan_df['risque'] = 'Non'
+        self.loan_df.loc[self.loan_df['taux_endettement'] > self.max_rate, 'risque'] = 'Oui'
 
-        return prets
 
     def tests_np3(self):
-        prets = self.test_np_init()
 
-        prets = prets.sort_values('benefices', ascending=False)
+
+        self.loan_df = self.loan_df.sort_values('benefices', ascending=False)
 
         # nombre de personnes ayant dépassé le taux max de 35%
         taux_max = 35
-        clients_risque = prets.loc[prets['taux_endettement'] > taux_max, :]
+        clients_risque = self.loan_df.loc[self.loan_df['taux_endettement'] > taux_max, :]
         print(clients_risque)
         nb = clients_risque.shape[0]
         print(len(clients_risque))
         print('Il y a', nb, 'clients qui ont dépassé le seuil autorisé')
 
-        clients_risque_paris = prets.loc[(prets['taux_endettement'] > taux_max) & (prets['ville'] == 'PARIS')]
+        clients_risque_paris = self.loan_df.loc[(self.loan_df['taux_endettement'] > taux_max) & (prets['ville'] == 'PARIS')]
         print(clients_risque_paris)
         print(clients_risque_paris.shape[0])
 
-        # ajoute la colonne risque
-        prets['risque'] = 'Non'
-        prets.loc[prets['taux_endettement'] > taux_max, 'risque'] = 'Oui'
-        print(prets.head(20))
-
         # Combien de prêts automobiles ont été accordés
-        prets_automobile = prets.loc[prets['type'] == 'automobile', :]
+        prets_automobile = self.loan_df.loc[self.loan_df['type'] == 'automobile', :]
         print(prets_automobile.shape[0])
         print(prets_automobile.head())
 
         # Quel est le coût total moyen de ces derniers
-        mask = prets['type'] == 'automobile'
-        print('coût total moyen: ' + str(prets.loc[mask, 'cout_total'].mean()))
+        mask = self.loan_df['type'] == 'automobile'
+        print('coût total moyen: ' + str(self.loan_df.loc[mask, 'cout_total'].mean()))
 
         # bénéfice mensuel total réalisé par l’agence Toulousaine
-        print(prets.keys())
+        print(self.loan_df.keys())
         # benefices_toutlouse =
         print("bénéfice mensuel total réalisé par l’agence Toulousaine: " +
-              str(prets.loc[prets['ville'] == 'TOULOUSE', 'benefices'].sum()))
+              str(self.loan_df.loc[self.loan_df['ville'] == 'TOULOUSE', 'benefices'].sum()))
 
     def tests_np2(self):
         data = np.arange(7)
