@@ -8,14 +8,42 @@ class DataScience:
     """
 
     def __init__(self):
-        self.csv_url = 'https://raw.githubusercontent.com/benjaminmrl/data-4452741/main/prets.csv'
-        self.loan_df = pd.read_csv(self.csv_url)
+        loan_url = 'https://raw.githubusercontent.com/benjaminmrl/data-4452741/main/prets.csv'
+        self.loan_df = pd.read_csv(loan_url)
         self.max_rate = 35
+
+        client1_url = 'https://raw.githubusercontent.com/benjaminmrl/data-4452741/main/clients.csv'
+        self.clients_1 = pd.read_csv(client1_url)
+        client2_url = 'https://raw.githubusercontent.com/benjaminmrl/data-4452741/main/clients_suite.csv'
+        self.clients_2 = pd.read_csv(client2_url)
 
         self.init_df()
 
-    def test_np4(self):
+    def test_np5(self):
         pass
+
+    def test_np4(self):
+        print(self.loan_df.keys())
+        profil_client = \
+            self.loan_df.groupby('identifiant')[
+                ['remboursement', 'taux_endettement', 'cout_total', 'benefices']].sum()
+        profil_client.reset_index(inplace=True)
+        print(profil_client.head())
+
+        profil_client['risque'] = 'Non'
+        profil_client.loc[profil_client['taux_endettement'] > self.max_rate, 'risque'] = 'Oui'
+        client_risque = profil_client.loc[profil_client['risque'] == 'Oui', :]
+
+        nb = client_risque.shape[0]
+        print('Il y a', nb, 'clients qui ont dépassé le seuil autorisé')
+
+        # benefices par agence
+        profits = self.loan_df.groupby(['ville', 'type'])['benefices'].sum()
+        print(profits)
+
+        # bénéfices moyen réalisés par chaque agence, pour chaque type de prêt
+        profits = self.loan_df.pivot_table(index='ville', columns='type', values='benefices', aggfunc='mean')
+        print(profits)
 
     def init_df(self):
 
@@ -34,6 +62,11 @@ class DataScience:
         self.loan_df['risque'] = 'Non'
         self.loan_df.loc[self.loan_df['taux_endettement'] > self.max_rate, 'risque'] = 'Oui'
 
+        # dataframe de profils clients
+        self.profil_clients = self.loan_df.groupby('identifiant')[
+            ['remboursement', 'taux_endettement', 'cout_total', 'benefices']].sum()
+        self.profil_clients.reset_index(inplace=True)
+
 
     def tests_np3(self):
 
@@ -41,14 +74,14 @@ class DataScience:
         self.loan_df = self.loan_df.sort_values('benefices', ascending=False)
 
         # nombre de personnes ayant dépassé le taux max de 35%
-        taux_max = 35
-        clients_risque = self.loan_df.loc[self.loan_df['taux_endettement'] > taux_max, :]
+        clients_risque = self.loan_df.loc[self.loan_df['taux_endettement'] > self.max_rate, :]
         print(clients_risque)
         nb = clients_risque.shape[0]
         print(len(clients_risque))
         print('Il y a', nb, 'clients qui ont dépassé le seuil autorisé')
 
-        clients_risque_paris = self.loan_df.loc[(self.loan_df['taux_endettement'] > taux_max) & (prets['ville'] == 'PARIS')]
+        clients_risque_paris = self.loan_df.loc[
+            (self.loan_df['taux_endettement'] > self.max_rate) & (self.loan_df['ville'] == 'PARIS')]
         print(clients_risque_paris)
         print(clients_risque_paris.shape[0])
 
