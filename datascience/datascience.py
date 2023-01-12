@@ -20,7 +20,18 @@ class DataScience:
         self.init_df()
 
     def test_np5(self):
-        pass
+        list_df = [self.clients_1, self.clients_2]
+        clients = pd.concat(list_df, ignore_index=True)
+
+        data = self.profil_clients.merge(clients, on='identifiant', how='inner')
+        print(data.head())
+
+        clients_age = pd.read_csv('https://raw.githubusercontent.com/benjaminmrl/data-4452741/main/client_age.csv')
+
+        data = data.merge(clients_age, on='identifiant', how='left')
+        print(data.shape)
+        print(data.head())
+        print(data.keys())
 
     def test_np4(self):
         print(self.loan_df.keys())
