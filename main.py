@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 
 
 def produits_exo():
-    cwd = os.path.dirname(__file__)
-    file = os.path.join(cwd, "data", "produits.csv")
+
+    file = os.path.join("data", "produits.csv")
     produits = pd.read_csv(file, sep=',')
-    file = os.path.join(cwd, "data", "commande.csv")
+    file = os.path.join("data", "commande.csv")
     commande = pd.read_csv(file, sep=',')
     print(produits.head())
     print(commande.head())
@@ -28,8 +28,8 @@ def produits_exo():
 
 
 def notes_exo():
-    cwd = os.path.dirname(__file__)
-    file = os.path.join(cwd, "data", "notes.csv")
+
+    file = os.path.join("data", "notes.csv")
     notes = pd.read_csv(file, sep=',')
     print(notes.head(-20))
     print(notes.drop_duplicates(['matiere']))
@@ -49,8 +49,8 @@ def loan_exo():
     tests_data_science.test_np5()
 
 def loan_exo_plot():
-    cwd = os.path.dirname(__file__)
-    file = os.path.join(cwd, "data", "prets_final.csv")
+
+    file = os.path.join("data", "prets_final.csv")
     prets = pd.read_csv(file)
     print(prets.head())
     print(prets.keys())
@@ -79,9 +79,6 @@ def loan_exo_plot():
     ax.pie(x=df1['benefices'], labels=df1['ville'], autopct='%.0f%%')
     ax.set_title('distribution des bénéfices réalisés', fontsize=12)
     plt.show()
-
-
-
 
 
 if __name__ == '__main__':
