@@ -4,7 +4,8 @@ import pandas as pd
 from pathlib import Path
 import os
 import matplotlib.pyplot as plt
-
+from matplotlib import font_manager
+import matplotlib
 
 def produits_exo():
 
@@ -80,6 +81,35 @@ def loan_exo_plot():
     ax.set_title('distribution des bénéfices réalisés', fontsize=12)
     plt.show()
 
+def ca_graph():
+    ca = pd.read_csv('data/CA.csv')
+    ca['date'] = pd.to_datetime(ca['date'])
+    print(ca.head())
+
+    plt.rcdefaults()
+
+    rgb_color = [51, 51, 51] #color in RGB format
+    rgb_decimal_1 = [x / 255.0 for x in rgb_color] #RGB color in "decimals"
+
+    rgb_color = [41, 41, 41] #color in RGB format
+    rgb_decimal_2 = [x / 255.0 for x in rgb_color] #RGB color in decimal format
+
+    params = {'text.color': 'white', 'xtick.color': 'white', 'ytick.color': 'white', 'figure.facecolor': rgb_decimal_1,
+              'axes.facecolor': rgb_decimal_2, 'font.family': 'Ink Free'}
+    plt.rcParams.update(params)
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(ca['date'], ca['immobilier'])
+    ax.plot(ca['date'], ca['automobile'])
+    ax.plot(ca['date'], ca['consommation'])
+
+
+    ax.set_title("Bénéfices mensuels nets sur l'année 2021, par type de prêt", fontsize=14)
+    ax.set_ylabel("Benefice net (€)")
+
+
+    plt.show()
+
 
 if __name__ == '__main__':
-    loan_exo_plot()
+    ca_graph()
